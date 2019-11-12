@@ -26,11 +26,11 @@ public class NoteController {
 
     @RequestMapping(value = "/notes", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.CREATED)
-    public Note createMotorcycle(@RequestBody @Valid Note note) {
+    public Note createNote(@RequestBody @Valid Note note) {
         return noteDao.addNote(note);
     }
 
-    @GetMapping("/notes/{book_id}")
+    @GetMapping("/notes/book/{book_id}")
     @ResponseStatus(value = HttpStatus.OK)
     public List<Note> findNotesByBook(@PathVariable int book_id) {
         if (book_id < 1) {

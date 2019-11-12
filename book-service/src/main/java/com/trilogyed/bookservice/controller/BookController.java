@@ -36,7 +36,7 @@ public class BookController {
     @ResponseStatus(HttpStatus.OK)
     public Book getBook(@PathVariable @Valid int id) throws IllegalArgumentException{
         if (id < 1 ){
-            throw new IllegalArgumentException("enter a vlid ID number");
+            throw new IllegalArgumentException("enter a valid ID number");
         }
         return bookDao.getBook(id);
     }
@@ -74,7 +74,7 @@ public class BookController {
     }
 
     @RequestMapping(value="/notes/book/{book_id}", method = RequestMethod.GET)
-    public Note[] helloCloud(@PathVariable @Valid int book_id) {
+    public List<Map<String, String>> getNotes(@PathVariable @Valid int book_id) {
         return client.getNotesByBook(book_id);
     }
 }
