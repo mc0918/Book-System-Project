@@ -1,8 +1,7 @@
 package com.trilogyed.bookservice.controller;
 
-import com.netflix.ribbon.proxy.annotation.Http;
-import com.trilogyed.bookservice.dao.BookDao;
 import com.trilogyed.bookservice.model.Book;
+import com.trilogyed.bookservice.serviceLayer.ServiceLayer;
 import com.trilogyed.bookservice.util.feign.NoteLookupClient;
 import com.trilogyed.bookservice.util.messages.NoteListEntry;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -24,14 +23,14 @@ public class BookController {
     private DiscoveryClient discoveryClient;
 
     @Autowired
-    private BookDao bookDao;
+    private ServiceLayer serviceLayer;
 
     private RestTemplate restTemplate;
 
     @RequestMapping(value = "/books", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public Book addBook(@RequestBody @Valid Book book){
-        return bookDao.saveBook(book);
+        return serviceLayer.saveBook(book);
     }
 
     @RequestMapping(value = "/books/{id}", method = RequestMethod.GET)
@@ -40,13 +39,13 @@ public class BookController {
         if (id < 1 ){
             throw new IllegalArgumentException("enter a valid ID number");
         }
-        return bookDao.getBook(id);
+        return serviceLayer.getBook(id);
     }
 
     @RequestMapping(value = "/books", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public List<Book> getAllBooks(){
-        return bookDao.getAllBooks();
+        return serviceLayer.getAllBooks();
     }
 
     @RequestMapping(value = "/books/{id}", method=RequestMethod.PUT)
@@ -55,7 +54,7 @@ public class BookController {
         if (b.getBook_id() < 1){
             throw new IllegalArgumentException("book must have a valid id");
         }
-        bookDao.updateBook(b);
+        serviceLayer.updateBook(b);
     }
 
     @RequestMapping(value = "/books/{id}", method = RequestMethod.DELETE)
@@ -64,7 +63,7 @@ public class BookController {
         if (id < 1){
             throw new IllegalArgumentException("enter a valid id");
         }
-        bookDao.deleteBook(id);
+        serviceLayer.deleteBook(id);
     }
 
     @Autowired
