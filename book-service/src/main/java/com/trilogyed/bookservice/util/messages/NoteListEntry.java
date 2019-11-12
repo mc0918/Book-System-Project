@@ -1,22 +1,20 @@
-package com.trilogyed.notequeueconsumer.util.messages;
-
-import com.sun.istack.internal.NotNull;
+package com.trilogyed.bookservice.util.messages;
 
 import java.util.Objects;
 
-public class NoteEntry {
-
+public class NoteListEntry {
     private int note_id;
     private int book_id;
     private String note;
 
-    public NoteEntry(){}
+    public NoteListEntry() {
+    }
 
-    public NoteEntry(String note) {
+    public NoteListEntry(String note) {
         this.note = note;
     }
 
-    public NoteEntry(int note_id, int book_id, String note) {
+    public NoteListEntry(int note_id, int book_id, String note) {
         this.note_id = note_id;
         this.book_id = book_id;
         this.note = note;
@@ -50,10 +48,10 @@ public class NoteEntry {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        NoteEntry noteEntry = (NoteEntry) o;
-        return note_id == noteEntry.note_id &&
-                book_id == noteEntry.book_id &&
-                note.equals(noteEntry.note);
+        NoteListEntry that = (NoteListEntry) o;
+        return note_id == that.note_id &&
+                book_id == that.book_id &&
+                note.equals(that.note);
     }
 
     @Override
@@ -63,7 +61,7 @@ public class NoteEntry {
 
     @Override
     public String toString() {
-        return "NoteEntry{" +
+        return "NoteListEntry{" +
                 "note_id=" + note_id +
                 ", book_id=" + book_id +
                 ", note='" + note + '\'' +

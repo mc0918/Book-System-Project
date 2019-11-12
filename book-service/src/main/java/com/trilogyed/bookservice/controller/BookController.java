@@ -4,6 +4,8 @@ import com.netflix.ribbon.proxy.annotation.Http;
 import com.trilogyed.bookservice.dao.BookDao;
 import com.trilogyed.bookservice.model.Book;
 import com.trilogyed.bookservice.util.feign.NoteLookupClient;
+import com.trilogyed.bookservice.util.messages.NoteListEntry;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -68,7 +70,6 @@ public class BookController {
     @Autowired
     private final NoteLookupClient client;
 
-
     BookController(NoteLookupClient client) {
         this.client = client;
     }
@@ -76,5 +77,19 @@ public class BookController {
     @RequestMapping(value="/notes/book/{book_id}", method = RequestMethod.GET)
     public List<Map<String, String>> getNotes(@PathVariable @Valid int book_id) {
         return client.getNotesByBook(book_id);
+    }
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    public BookController(RabbitTemplate rabbitTemplate, NoteLookupClient noteLookupClient) {
+        this.client = noteLookupClient;
+        this.rabbitTemplate = rabbitTemplate;
+    }
+
+    @RequestMapping(value = "/notes", method = RequestMethod.POST)
+    public String createNote(NoteListEntry noteListEntry) {
+        //book.getBookId()
+        return null;
     }
 }
