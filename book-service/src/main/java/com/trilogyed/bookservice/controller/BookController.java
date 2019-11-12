@@ -4,6 +4,7 @@ import com.trilogyed.bookservice.model.Book;
 import com.trilogyed.bookservice.serviceLayer.ServiceLayer;
 import com.trilogyed.bookservice.util.feign.NoteLookupClient;
 import com.trilogyed.bookservice.util.messages.NoteListEntry;
+import com.trilogyed.bookservice.viewModel.BookViewModel;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -29,13 +30,13 @@ public class BookController {
 
     @RequestMapping(value = "/books", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public Book addBook(@RequestBody @Valid Book book){
-        return serviceLayer.saveBook(book);
+    public BookViewModel addBook(@RequestBody @Valid BookViewModel b){
+        return serviceLayer.saveBook(b);
     }
 
     @RequestMapping(value = "/books/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Book getBook(@PathVariable @Valid int id) throws IllegalArgumentException{
+    public BookViewModel getBook(@PathVariable @Valid int id) throws IllegalArgumentException{
         if (id < 1 ){
             throw new IllegalArgumentException("enter a valid ID number");
         }
@@ -44,13 +45,13 @@ public class BookController {
 
     @RequestMapping(value = "/books", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public List<Book> getAllBooks(){
+    public List<BookViewModel> getAllBooks(){
         return serviceLayer.getAllBooks();
     }
 
     @RequestMapping(value = "/books/{id}", method=RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    public void updateBook(@RequestBody @Valid Book b) throws IllegalArgumentException{
+    public void updateBook(@RequestBody @Valid BookViewModel b) throws IllegalArgumentException{
         if (b.getBook_id() < 1){
             throw new IllegalArgumentException("book must have a valid id");
         }
