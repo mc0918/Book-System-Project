@@ -11,7 +11,6 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Random;
 
 @RestController
 @RefreshScope
@@ -30,6 +29,15 @@ public class NoteController {
         return noteDao.addNote(note);
     }
 
+    @GetMapping("/notes/{note_id}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public Note findNoteById(@PathVariable int note_id) {
+        if (note_id < 1) {
+            throw new IllegalArgumentException("note id must be greater than 0.");
+        }
+        return noteDao.getNoteById(note_id);
+    }
+
     @GetMapping("/notes/{book_id}")
     @ResponseStatus(value = HttpStatus.OK)
     public List<Note> findNotesByBook(@PathVariable int book_id) {
@@ -37,5 +45,25 @@ public class NoteController {
             throw new IllegalArgumentException("book id must be greater than 0.");
         }
         return noteDao.getNotesByBook(book_id);
+    }
+
+    @GetMapping("/notes")
+    @ResponseStatus(value = HttpStatus.OK)
+    public List<Note> findAllNotes() {
+        return noteDao.getAllNotes();
+    }
+
+    @PutMapping("/notes")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateNote(Note note) {
+        noteDao.updateNote(note);
+
+    }
+
+    @DeleteMapping("/notes/{note_id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteNote(@PathVariable int note_id) {
+        noteDao.deleteNote(note_id);
+
     }
 }
