@@ -2,6 +2,7 @@ package com.trilogyed.noteservice.controller;
 
 import com.trilogyed.noteservice.dao.NoteDao;
 import com.trilogyed.noteservice.model.Note;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -21,12 +22,34 @@ public class NoteController {
     @Autowired
     private NoteDao noteDao;
 
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    public NoteController(RabbitTemplate rabbitTemplate) {
+        this.rabbitTemplate = rabbitTemplate;
+    }
+
     private RestTemplate restTemplate = new RestTemplate();
+
+
+
 
     @RequestMapping(value = "/notes", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.CREATED)
     public Note createNote(@RequestBody @Valid Note note) {
+
+
         return noteDao.addNote(note);
+    }
+
+    @RequestMapping(value = "/notes/queue", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public Note createNoteFromQueue() {
+
+        Object noteFromQueue = rabbitTemplate.receiveAndConvert("note-queue");
+        System.out.println("Strung cheese....   " + noteFromQueue);
+
+        return null;
     }
 
     @GetMapping("/notes/{note_id}")
@@ -66,4 +89,8 @@ public class NoteController {
         noteDao.deleteNote(note_id);
 
     }
+
+    //rabbit thing here
+    //recieve?
+    //store in db
 }

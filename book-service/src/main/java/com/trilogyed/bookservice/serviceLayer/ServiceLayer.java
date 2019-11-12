@@ -2,12 +2,18 @@ package com.trilogyed.bookservice.serviceLayer;
 
 import com.trilogyed.bookservice.dao.BookDao;
 import com.trilogyed.bookservice.model.Book;
+import com.trilogyed.bookservice.util.feign.NoteLookupClient;
 import com.trilogyed.bookservice.viewModel.BookViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class ServiceLayer {
@@ -22,12 +28,14 @@ public class ServiceLayer {
         Book b = new Book(bvm.getTitle(), bvm.getAuthor());
         b = bookDao.saveBook(b);
         bvm.setBook_id(b.getBook_id());
+
         return bvm;
     }
 
     public BookViewModel getBook(int book_id){
         Book b = bookDao.getBook(book_id);
         BookViewModel bvm = new BookViewModel(b.getBook_id(), b.getTitle(), b.getAuthor());
+        return bvm;
     }
 
     public List<BookViewModel> getAllBooks() {

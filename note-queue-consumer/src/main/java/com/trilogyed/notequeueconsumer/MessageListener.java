@@ -9,5 +9,12 @@ public class MessageListener {
     @RabbitListener(queues = NoteQueueConsumerApplication.QUEUE_NAME)
     public void receiveMessage(NoteEntry msg) {
         System.out.println(msg.toString());
+        //Todo: create or update note
+
+    }
+
+    @RabbitListener(queues = NoteQueueConsumerApplication.QUEUE_NAME)
+    public void sendMessage(NoteEntry msg){
+
     }
 }

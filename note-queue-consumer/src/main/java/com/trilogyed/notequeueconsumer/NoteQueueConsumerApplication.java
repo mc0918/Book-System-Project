@@ -17,7 +17,7 @@ public class NoteQueueConsumerApplication {
 
 	public static final String TOPIC_EXCHANGE_NAME = "note-exchange";
 	public static final String QUEUE_NAME = "note-queue";
-	public static final String ROUTING_KEY = "note.#";
+	public static final String ROUTING_KEY = "note.add.#";
 
 	@Bean
 	Queue queue() {

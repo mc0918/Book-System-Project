@@ -20,18 +20,53 @@ import java.util.Map;
 @RestController
 @RefreshScope
 public class BookController {
+
     @Autowired
     private DiscoveryClient discoveryClient;
+
+    @Autowired
+    private NoteLookupClient client; //removed final
+
+    public BookController(NoteLookupClient client) {
+        this.client = client;
+    }
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    public BookController(){} //why is this necessary?
+
+    public BookController(RabbitTemplate rabbitTemplate, NoteLookupClient noteLookupClient) {
+        this.client = noteLookupClient;
+        this.rabbitTemplate = rabbitTemplate;
+    }
 
     @Autowired
     private ServiceLayer serviceLayer;
 
     private RestTemplate restTemplate;
 
+    public static final String EXCHANGE = "note-exchange";
+    public static final String ROUTING_KEY = "note.add.book.controller";
+
     @RequestMapping(value = "/books", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public BookViewModel addBook(@RequestBody @Valid BookViewModel b){
-        return serviceLayer.saveBook(b);
+        b = serviceLayer.saveBook(b);
+
+        final int bookId = b.getBook_id();
+
+        b.getNotes().forEach(note -> {
+            note.setBook_id(bookId);
+
+            System.out.println("Sending note: " + note.getNote());
+
+            rabbitTemplate.convertAndSend(EXCHANGE, ROUTING_KEY, note); //maybe one note at a time instead of a list?
+            System.out.println("Note sent :)");
+        });
+
+
+        return b;
     }
 
     @RequestMapping(value = "/books/{id}", method = RequestMethod.GET)
@@ -67,25 +102,17 @@ public class BookController {
         serviceLayer.deleteBook(id);
     }
 
-    @Autowired
-    private final NoteLookupClient client;
 
-    BookController(NoteLookupClient client) {
-        this.client = client;
-    }
 
     @RequestMapping(value="/notes/book/{book_id}", method = RequestMethod.GET)
-    public List<Map<String, String>> getNotes(@PathVariable @Valid int book_id) {
-        return client.getNotesByBook(book_id);
+    public BookViewModel getNotes(@PathVariable @Valid int book_id) {
+        List<NoteListEntry> listEntries = client.getNotesByBook(book_id);
+        BookViewModel modelToUpdate = serviceLayer.getBook(book_id);
+        modelToUpdate.setNotes(listEntries);
+        return modelToUpdate;
     }
 
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
 
-    public BookController(RabbitTemplate rabbitTemplate, NoteLookupClient noteLookupClient) {
-        this.client = noteLookupClient;
-        this.rabbitTemplate = rabbitTemplate;
-    }
 
     @RequestMapping(value = "/notes", method = RequestMethod.POST)
     public String createNote(NoteListEntry noteListEntry) {
