@@ -2,6 +2,7 @@ package com.trilogyed.noteservice.controller;
 
 import com.trilogyed.noteservice.dao.NoteDao;
 import com.trilogyed.noteservice.model.Note;
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -40,16 +41,6 @@ public class NoteController {
 
 
         return noteDao.addNote(note);
-    }
-
-    @RequestMapping(value = "/notes/queue", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.CREATED)
-    public Note createNoteFromQueue() {
-
-        Object noteFromQueue = rabbitTemplate.receiveAndConvert("note-queue");
-        System.out.println("Strung cheese....   " + noteFromQueue);
-
-        return null;
     }
 
     @GetMapping("/notes/{note_id}")
