@@ -78,10 +78,10 @@ public class NoteDaoJdbcTemplateImpl implements NoteDao {
     @Override
     public void updateNote(Note note) {
         jdbcTemplate.update(UPDATE_NOTE_SQL,
-                note.getNote_id(),
                 note.getBook_id(),
-                note.getNote()
-        );
+                note.getNote(),
+                note.getNote_id()
+                );
     }
 
     @Override
