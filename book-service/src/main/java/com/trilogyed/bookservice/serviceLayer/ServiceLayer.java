@@ -2,9 +2,11 @@ package com.trilogyed.bookservice.serviceLayer;
 
 import com.trilogyed.bookservice.dao.BookDao;
 import com.trilogyed.bookservice.model.Book;
+import com.trilogyed.bookservice.viewModel.BookViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -16,15 +18,39 @@ public class ServiceLayer {
         this.bookDao = bookDao;
     }
 
-    public Book saveBook(Book book){
-        return bookDao.saveBook(book);
+    public BookViewModel saveBook(BookViewModel bvm){
+        Book b = new Book(bvm.getTitle(), bvm.getAuthor());
+        b = bookDao.saveBook(b);
+        bvm.setBook_id(b.getBook_id());
+        return bvm;
     }
 
-    public Book getBook(int book_id){
-        return bookDao.getBook(book_id);
+    public BookViewModel getBook(int book_id){
+        Book b = bookDao.getBook(book_id);
+        BookViewModel bvm = new BookViewModel(b.getBook_id(), b.getTitle(), b.getAuthor());
     }
 
-    public List<Book> getAllBooks() {
-        return bookDao.getAllBooks();
+    public List<BookViewModel> getAllBooks() {
+        List<Book> bookList = bookDao.getAllBooks();
+        List<BookViewModel> bookViewModelList = new ArrayList<>();
+        for (Book i : bookList){
+            BookViewModel ivmTemp = buildViewModel(i);
+            bookViewModelList.add(ivmTemp);
+        }
+        return bookViewModelList;
+    }
+
+    public void updateBook(BookViewModel bvm) {
+        Book b = new Book(bvm.getBook_id(), bvm.getTitle(), bvm.getAuthor());
+        bookDao.updateBook(b);
+    }
+
+    public void deleteBook(int book_id){
+        bookDao.deleteBook(book_id);
+    }
+
+    public BookViewModel buildViewModel(Book b){
+        BookViewModel bvm = new BookViewModel(b.getBook_id(), b.getTitle(), b.getAuthor());
+        return bvm;
     }
 }
