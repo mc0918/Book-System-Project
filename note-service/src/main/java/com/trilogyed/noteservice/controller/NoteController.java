@@ -39,7 +39,6 @@ public class NoteController {
     @ResponseStatus(value = HttpStatus.CREATED)
     public Note createNote(@RequestBody @Valid Note note) {
 
-
         return noteDao.addNote(note);
     }
 
