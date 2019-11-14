@@ -20,6 +20,11 @@ public class Note {
         this.note = note;
     }
 
+    public Note(int book_id, String note) {
+        this.book_id = book_id;
+        this.note = note;
+    }
+
     public int getNote_id() {
         return note_id;
     }
