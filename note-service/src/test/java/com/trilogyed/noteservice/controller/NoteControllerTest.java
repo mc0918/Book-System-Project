@@ -6,10 +6,14 @@ import com.trilogyed.noteservice.model.Note;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,8 +28,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @RunWith(SpringRunner.class)
 @WebMvcTest(NoteController.class)
+@ImportAutoConfiguration(RefreshAutoConfiguration.class)
 public class NoteControllerTest {
 
     @Autowired
@@ -33,6 +39,11 @@ public class NoteControllerTest {
 
     @MockBean
     private NoteDao noteDao;
+
+    @MockBean
+    private ConnectionFactory connectionFactory;
+    @MockBean
+    private DiscoveryClient discoveryClient;
 
     private JacksonTester<Note> jacksonTester;
     private ObjectMapper mapper;
