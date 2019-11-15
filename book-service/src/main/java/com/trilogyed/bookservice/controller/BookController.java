@@ -99,6 +99,8 @@ public class BookController {
         if (id < 1){
             throw new IllegalArgumentException("enter a valid id");
         }
+        List<NoteListEntry> notes = client.getNotesByBook(id);
+        notes.stream().forEach(n -> client.deleteNote(n.getNote_id()));
         serviceLayer.deleteBook(id);
     }
 
